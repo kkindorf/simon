@@ -1,0 +1,31 @@
+
+.game-container{
+  width: 500px;
+}
+
+.bgButton{
+  width: 100px;
+  border: 1px solid black;
+  padding: 50px;
+  display: inline-block;
+}
+.one {
+  background: #00AD3B;
+  /*background onClick: 08C40B*/
+}
+.two{
+  background: #7A0202;
+  /*background onClick: BF0303*/
+}
+.three{
+  background: #CCC908;
+  /*background onClick: F0ED09*/
+}
+.four{
+  background: #285CFA;
+  /*background onClick: 5A81FA*/
+}
+
+#normal-mode, #restart{
+  display: inline-block;
+}
