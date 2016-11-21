@@ -1,10 +1,9 @@
 var React = require('react');
 var MainConsole = require('./mainConsole.js');
 var BgBtnContainer = require('./bgContainer.js');
-var arr = [];
+var arr = [0];
 var count = 0;
 var initialState = {
-                    loop: true,
                     play: true,
                     normal: false,
                     restart: false,
@@ -27,7 +26,7 @@ var SimonContainer = React.createClass({
   onRestart: function(){
     //reset state
     this.setState(this.getInitialState());
-    arr = [];
+    arr = [0];
     count = 0;
   },
   getRandomId: function(){
@@ -47,14 +46,14 @@ var SimonContainer = React.createClass({
       this.setState({bgButtonOne: 'bgButton one-active'});
       setTimeout(function(){
         this.resetBtnColor();
-      }.bind(this), 450)
+      }.bind(this), 500);
     }
     else if(num === 2){
       this.refs.noiseTwo.play();
       this.setState({bgButtonTwo: 'bgButton two-active'});
       setTimeout(function(){
         this.resetBtnColor();
-      }.bind(this), 500)
+      }.bind(this), 500);
 
     }
     else if(num === 3){
@@ -62,7 +61,7 @@ var SimonContainer = React.createClass({
       this.setState({bgButtonThree: 'bgButton three-active'});
       setTimeout(function(){
         this.resetBtnColor();
-      }.bind(this), 500)
+      }.bind(this), 500);
 
     }
     else if(num === 4){
@@ -70,7 +69,7 @@ var SimonContainer = React.createClass({
       this.setState({bgButtonFour: 'bgButton four-active'});
       setTimeout(function(){
         this.resetBtnColor();
-      }.bind(this), 500)
+      }.bind(this), 500);
     }
 
   },
@@ -79,8 +78,8 @@ var SimonContainer = React.createClass({
     this.playSound(num);
     setTimeout(function(){
       this.resetBtnColor();
-    }.bind(this), 450)
-    arr=[1,2,3,4];
+    }.bind(this), 500);
+    arr.push(num);
   },
    doSetTimeout:function(i) {
   setTimeout(function() {
@@ -88,16 +87,11 @@ var SimonContainer = React.createClass({
     this.playSound(arr[i]);
   }.bind(this), i * 1000);
 },
-doSetTimeoutforFirst: function(i){
-  setTimeout(function() {
-    this.playSound(arr[i]);
-  }.bind(this), 1000);
-},
 
   loopMoves: function(){
     var i;
     //figure out how to play the first one this starts at second right now
-      for (i = 0; i < arr.length; i++){
+      for (i = 1; i < arr.length; i++){
         this.doSetTimeout(i);
       }
       if(i === arr.length){
@@ -114,7 +108,6 @@ doSetTimeoutforFirst: function(i){
     console.log(arr);
     var id = event.target.id;
     id = parseInt(id);
-
     this.playSound(id);
     if(count > 0){
       this.loopMoves();
