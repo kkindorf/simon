@@ -21733,48 +21733,26 @@
 	var React = __webpack_require__(1);
 	var MainConsole = __webpack_require__(184);
 	var BgBtnContainer = __webpack_require__(185);
+	var arr = [];
+	var count = 0;
 	var initialState = {
+	  loop: true,
+	  play: true,
 	  normal: false,
 	  restart: false,
 	  strict: false,
-	  start: false,
-	  moveCount: ''
+	  moveCount: 0,
+	  bgButtonOne: 'bgButton one',
+	  bgButtonTwo: 'bgButton two',
+	  bgButtonThree: 'bgButton three',
+	  bgButtonFour: 'bgButton four'
+	
 	};
 	var SimonContainer = React.createClass({
 	  displayName: 'SimonContainer',
 	
 	  getInitialState: function getInitialState() {
 	    return initialState;
-	  },
-	  getRandomId: function getRandomId() {
-	    return Math.floor(Math.random() * (4 - 1)) + 1;
-	  },
-	  playSound: function playSound(num) {
-	    if (num === 1) {
-	      this.refs.noiseOne.play();
-	    } else if (num === 2) {
-	      this.refs.noiseTwo.play();
-	    } else if (num === 3) {
-	      this.refs.noiseThree.play();
-	    } else if (num === 4) {
-	      this.refs.noiseFour.play();
-	    }
-	  },
-	  compMove: function compMove() {
-	    //figure out how to change background color next
-	    var arr = [];
-	    var num = this.getRandomId();
-	    this.playSound(num);
-	    arr.push(num);
-	    //return arr for checking if human choice is correct
-	  },
-	  onBtnType: function onBtnType(event) {
-	    var id = event.target.id;
-	    id = parseInt(id);
-	    if (this.state.start === false) {
-	      return;
-	    }
-	    this.playSound(id);
 	  },
 	  onStart: function onStart() {
 	    //start game
@@ -21783,19 +21761,102 @@
 	  onRestart: function onRestart() {
 	    //reset state
 	    this.setState(this.getInitialState());
+	    arr = [];
+	    count = 0;
 	  },
-	  onWorkType: function onWorkType(event) {
+	  getRandomId: function getRandomId() {
+	    return Math.floor(Math.random() * (4 - 1)) + 1;
+	  },
+	  resetBtnColor: function resetBtnColor() {
+	    this.setState({
+	      bgButtonOne: 'bgButton one',
+	      bgButtonTwo: 'bgButton two',
+	      bgButtonThree: 'bgButton three',
+	      bgButtonFour: 'bgButton four'
+	    });
+	  },
+	  playSound: function playSound(num) {
+	    if (num === 1) {
+	      this.refs.noiseOne.play();
+	      this.setState({ bgButtonOne: 'bgButton one-active' });
+	      setTimeout(function () {
+	        this.resetBtnColor();
+	      }.bind(this), 450);
+	    } else if (num === 2) {
+	      this.refs.noiseTwo.play();
+	      this.setState({ bgButtonTwo: 'bgButton two-active' });
+	      setTimeout(function () {
+	        this.resetBtnColor();
+	      }.bind(this), 500);
+	    } else if (num === 3) {
+	      this.refs.noiseThree.play();
+	      this.setState({ bgButtonThree: 'bgButton three-active' });
+	      setTimeout(function () {
+	        this.resetBtnColor();
+	      }.bind(this), 500);
+	    } else if (num === 4) {
+	      this.refs.noiseFour.play();
+	      this.setState({ bgButtonFour: 'bgButton four-active' });
+	      setTimeout(function () {
+	        this.resetBtnColor();
+	      }.bind(this), 500);
+	    }
+	  },
+	  firstMove: function firstMove() {
+	    var num = this.getRandomId();
+	    this.playSound(num);
+	    setTimeout(function () {
+	      this.resetBtnColor();
+	    }.bind(this), 450);
+	    arr = [1, 2, 3, 4];
+	  },
+	  doSetTimeout: function doSetTimeout(i) {
+	    setTimeout(function () {
+	      console.log(arr[i]);
+	      this.playSound(arr[i]);
+	    }.bind(this), i * 1000);
+	  },
+	  doSetTimeoutforFirst: function doSetTimeoutforFirst(i) {
+	    setTimeout(function () {
+	      this.playSound(arr[i]);
+	    }.bind(this), 1000);
+	  },
+	
+	  loopMoves: function loopMoves() {
+	    var i;
+	    //figure out how to play the first one this starts at second right now
+	    for (i = 0; i < arr.length; i++) {
+	      this.doSetTimeout(i);
+	    }
+	    if (i === arr.length) {
+	      //add to array of moves
+	      setTimeout(function () {
+	        this.firstMove();
+	      }.bind(this), i * 1000);
+	    }
+	  },
+	  onBtnType: function onBtnType(event) {
+	    count++;
+	    console.log(arr);
+	    var id = event.target.id;
+	    id = parseInt(id);
+	
+	    this.playSound(id);
+	    if (count > 0) {
+	      this.loopMoves();
+	    }
+	  },
+	  onGameType: function onGameType(event) {
 	    var id = event.target.id;
 	    if (!this.state.start) {
 	      return;
 	    }
 	    if (id === 'normal') {
-	      this.setState({ normal: true, start: false });
-	      this.compMove();
-	      //run game function using normal flag
+	      this.setState({ normal: true, start: false, play: false });
+	      this.firstMove();
 	    } else if (id === 'strict') {
-	      this.setState({ strict: true, start: false });
-	      this.compMove();
+	      this.setState({ strict: true, start: false, play: false });
+	      this.firstMove();
 	      //run game function using strict flag
 	    }
 	  },
@@ -21813,8 +21874,13 @@
 	        React.createElement(
 	          'div',
 	          { className: 'game-container' },
-	          React.createElement(BgBtnContainer, { onClick: this.onBtnType }),
-	          React.createElement(MainConsole, { onClick: this.onWorkType,
+	          React.createElement(BgBtnContainer, { onClick: this.onBtnType,
+	            bgButtonOne: this.state.bgButtonOne,
+	            bgButtonTwo: this.state.bgButtonTwo,
+	            bgButtonThree: this.state.bgButtonThree,
+	            bgButtonFour: this.state.bgButtonFour }),
+	          React.createElement(MainConsole, { numMoves: this.state.moveCount,
+	            onClick: this.onGameType,
 	            onStart: this.onStart,
 	            onRestart: this.onRestart })
 	        )
@@ -21885,14 +21951,14 @@
 	      React.createElement(
 	        'div',
 	        { className: 'firstTwoButtons' },
-	        React.createElement('div', { id: '1', className: 'bgButton one', onClick: this.props.onClick }),
-	        React.createElement('div', { id: '2', className: 'bgButton two', onClick: this.props.onClick })
+	        React.createElement('div', { id: '1', className: this.props.bgButtonOne, onClick: this.props.onClick }),
+	        React.createElement('div', { id: '2', className: this.props.bgButtonTwo, onClick: this.props.onClick })
 	      ),
 	      React.createElement(
 	        'div',
 	        { className: 'secondButtons' },
-	        React.createElement('div', { id: '3', className: 'bgButton three', onClick: this.props.onClick }),
-	        React.createElement('div', { id: '4', className: 'bgButton four', onClick: this.props.onClick })
+	        React.createElement('div', { id: '3', className: this.props.bgButtonThree, onClick: this.props.onClick }),
+	        React.createElement('div', { id: '4', className: this.props.bgButtonFour, onClick: this.props.onClick })
 	      )
 	    );
 	  }

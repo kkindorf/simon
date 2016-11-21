@@ -14,11 +14,17 @@
 .one {
   background: #00AD3B;
 }
+.one-active{
+  background: #08C40B;
+}
 .one:active{
   background: #08C40B;
 }
 .two{
   background: #7A0202;
+}
+.two-active{
+  background: #BF0303;
 }
 .two:active{
   background: #BF0303;
@@ -26,12 +32,18 @@
 .three{
   background: #CCC908;
 }
+.three-active{
+  background: #F0ED09;
+}
 .three:active{
   background: #F0ED09;
 }
 .four{
   background: #285CFA;
 
+}
+.four-active{
+  background: #5A81FA;
 }
 .four:active{
   background: #5A81FA;
