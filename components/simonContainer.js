@@ -2,7 +2,11 @@ var React = require('react');
 var MainConsole = require('./mainConsole.js');
 var BgBtnContainer = require('./bgContainer.js');
 var arr = [0];
+var humanArr=[0];
 var count = 0;
+var correct = 1;
+var humanClick = 0;
+var correctChoice = true;
 var initialState = {
                     play: true,
                     normal: false,
@@ -27,7 +31,11 @@ var SimonContainer = React.createClass({
     //reset state
     this.setState(this.getInitialState());
     arr = [0];
+    humanArr=[0];
     count = 0;
+    correct = 1;
+    correctChoice = true;
+    humanClick = 0;
   },
   getRandomId: function(){
     return Math.floor(Math.random() * (4 - 1)) + 1;
@@ -41,14 +49,14 @@ var SimonContainer = React.createClass({
       })
   },
   playSound: function(num){
-    if(num === 1){
+    if(num === 1 && correctChoice){
       this.refs.noiseOne.play();
       this.setState({bgButtonOne: 'bgButton one-active'});
       setTimeout(function(){
         this.resetBtnColor();
       }.bind(this), 500);
     }
-    else if(num === 2){
+    else if(num === 2 && correctChoice){
       this.refs.noiseTwo.play();
       this.setState({bgButtonTwo: 'bgButton two-active'});
       setTimeout(function(){
@@ -56,7 +64,7 @@ var SimonContainer = React.createClass({
       }.bind(this), 500);
 
     }
-    else if(num === 3){
+    else if(num === 3 && correctChoice){
       this.refs.noiseThree.play();
       this.setState({bgButtonThree: 'bgButton three-active'});
       setTimeout(function(){
@@ -64,7 +72,7 @@ var SimonContainer = React.createClass({
       }.bind(this), 500);
 
     }
-    else if(num === 4){
+    else if(num === 4 && correctChoice){
       this.refs.noiseFour.play();
       this.setState({bgButtonFour: 'bgButton four-active'});
       setTimeout(function(){
@@ -76,24 +84,28 @@ var SimonContainer = React.createClass({
   firstMove: function(){
     var num = this.getRandomId();
     this.playSound(num);
+    arr.push(num);
+    console.log(arr);
     setTimeout(function(){
       this.resetBtnColor();
     }.bind(this), 500);
-    arr.push(num);
+
   },
    doSetTimeout:function(i) {
-  setTimeout(function() {
-    console.log(arr[i]);
-    this.playSound(arr[i]);
-  }.bind(this), i * 1000);
+      setTimeout(function() {
+        this.playSound(arr[i]);
+      }.bind(this), i * 1000);
 },
 
   loopMoves: function(){
-    var i;
-    //figure out how to play the first one this starts at second right now
+    correct = 1;
+    humanClick = 0;
+    var i = 1;
       for (i = 1; i < arr.length; i++){
         this.doSetTimeout(i);
       }
+      console.log(i)
+      console.log(arr.length);
       if(i === arr.length){
         //add to array of moves
         setTimeout(function(){
@@ -101,18 +113,27 @@ var SimonContainer = React.createClass({
         }.bind(this), i * 1000);
       }
 
+  },
+  checkChoices: function(humanClick, num){
+    var arrLength = arr.length;
+    if(arr[humanClick] === num){
+      correct++;
+    }
+    console.log('correct is '+correct);
+    console.log('arr length is'+arrLength);
+    if(correct === arrLength){
+      console.log('next loop');
+       this.loopMoves();
+    }
 
   },
   onBtnType: function(event){
-    count++;
-    console.log(arr);
+    humanClick++;
+    console.log(humanClick);
     var id = event.target.id;
     id = parseInt(id);
     this.playSound(id);
-    if(count > 0){
-      this.loopMoves();
-    }
-
+    this.checkChoices(humanClick, id);
   },
   onGameType: function(event){
     var id = event.target.id;
