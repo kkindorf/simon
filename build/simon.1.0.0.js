@@ -21735,10 +21735,8 @@
 	var BgBtnContainer = __webpack_require__(185);
 	var arr = [0];
 	var humanArr = [0];
-	var count = 0;
 	var correct = 1;
 	var humanClick = 0;
-	var correctChoice = true;
 	var initialState = {
 	  play: true,
 	  normal: false,
@@ -21766,10 +21764,15 @@
 	    this.setState(this.getInitialState());
 	    arr = [0];
 	    humanArr = [0];
-	    count = 0;
 	    correct = 1;
-	    correctChoice = true;
 	    humanClick = 0;
+	  },
+	  restartLoops: function restartLoops() {
+	    arr = [0];
+	    humanArr = [0];
+	    correct = 1;
+	    humanClick = 0;
+	    this.firstMove();
 	  },
 	  getRandomId: function getRandomId() {
 	    return Math.floor(Math.random() * (4 - 1)) + 1;
@@ -21783,25 +21786,37 @@
 	    });
 	  },
 	  playSound: function playSound(num) {
-	    if (num === 1 && correctChoice) {
+	    if (num === 0 && strict === true) {
+	      this.refs.error.play();
+	      setTimeout(function () {
+	        this.restartLoops();
+	      }.bind(this), 600);
+	    }
+	    if (num === 0 && normal) {
+	      this.refs.error.play();
+	      setTimeout(function () {
+	        this.loopMoves();
+	      }.bind(this), 600);
+	    }
+	    if (num === 1) {
 	      this.refs.noiseOne.play();
 	      this.setState({ bgButtonOne: 'bgButton one-active' });
 	      setTimeout(function () {
 	        this.resetBtnColor();
 	      }.bind(this), 500);
-	    } else if (num === 2 && correctChoice) {
+	    } else if (num === 2) {
 	      this.refs.noiseTwo.play();
 	      this.setState({ bgButtonTwo: 'bgButton two-active' });
 	      setTimeout(function () {
 	        this.resetBtnColor();
 	      }.bind(this), 500);
-	    } else if (num === 3 && correctChoice) {
+	    } else if (num === 3) {
 	      this.refs.noiseThree.play();
 	      this.setState({ bgButtonThree: 'bgButton three-active' });
 	      setTimeout(function () {
 	        this.resetBtnColor();
 	      }.bind(this), 500);
-	    } else if (num === 4 && correctChoice) {
+	    } else if (num === 4) {
 	      this.refs.noiseFour.play();
 	      this.setState({ bgButtonFour: 'bgButton four-active' });
 	      setTimeout(function () {
@@ -21844,6 +21859,8 @@
 	    var arrLength = arr.length;
 	    if (arr[humanClick] === num) {
 	      correct++;
+	    } else if (arr[humanClick] !== num) {
+	      this.playSound(0);
 	    }
 	    console.log('correct is ' + correct);
 	    console.log('arr length is' + arrLength);
@@ -21854,7 +21871,6 @@
 	  },
 	  onBtnType: function onBtnType(event) {
 	    humanClick++;
-	    console.log(humanClick);
 	    var id = event.target.id;
 	    id = parseInt(id);
 	    this.playSound(id);
@@ -21885,6 +21901,7 @@
 	        React.createElement('audio', { ref: 'noiseTwo', src: 'https://s3.amazonaws.com/freecodecamp/simonSound2.mp3', type: 'audio/mp3' }),
 	        React.createElement('audio', { ref: 'noiseThree', src: 'https://s3.amazonaws.com/freecodecamp/simonSound3.mp3', type: 'audio/mp3' }),
 	        React.createElement('audio', { ref: 'noiseFour', src: 'https://s3.amazonaws.com/freecodecamp/simonSound4.mp3', type: 'audio/mp3' }),
+	        React.createElement('audio', { ref: 'error', src: './family-feud.wav', type: 'audio/wav' }),
 	        React.createElement(
 	          'div',
 	          { className: 'game-container' },
