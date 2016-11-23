@@ -21738,7 +21738,6 @@
 	var correct = 1;
 	var humanClick = 0;
 	var initialState = {
-	  play: true,
 	  normal: false,
 	  restart: false,
 	  strict: false,
@@ -21756,11 +21755,9 @@
 	    return initialState;
 	  },
 	  onStart: function onStart() {
-	    //start game
 	    this.setState({ start: true });
 	  },
 	  onRestart: function onRestart() {
-	    //reset state
 	    this.setState(this.getInitialState());
 	    arr = [0];
 	    humanArr = [0];
@@ -21786,42 +21783,33 @@
 	    });
 	  },
 	  playSound: function playSound(num) {
-	    if (num === 0 && strict === true) {
+	    if (num === 0) {
 	      this.refs.error.play();
-	      setTimeout(function () {
-	        this.restartLoops();
-	      }.bind(this), 600);
-	    }
-	    if (num === 0 && normal) {
-	      this.refs.error.play();
-	      setTimeout(function () {
-	        this.loopMoves();
-	      }.bind(this), 600);
 	    }
 	    if (num === 1) {
 	      this.refs.noiseOne.play();
 	      this.setState({ bgButtonOne: 'bgButton one-active' });
 	      setTimeout(function () {
 	        this.resetBtnColor();
-	      }.bind(this), 500);
+	      }.bind(this), 400);
 	    } else if (num === 2) {
 	      this.refs.noiseTwo.play();
 	      this.setState({ bgButtonTwo: 'bgButton two-active' });
 	      setTimeout(function () {
 	        this.resetBtnColor();
-	      }.bind(this), 500);
+	      }.bind(this), 400);
 	    } else if (num === 3) {
 	      this.refs.noiseThree.play();
 	      this.setState({ bgButtonThree: 'bgButton three-active' });
 	      setTimeout(function () {
 	        this.resetBtnColor();
-	      }.bind(this), 500);
+	      }.bind(this), 400);
 	    } else if (num === 4) {
 	      this.refs.noiseFour.play();
 	      this.setState({ bgButtonFour: 'bgButton four-active' });
 	      setTimeout(function () {
 	        this.resetBtnColor();
-	      }.bind(this), 500);
+	      }.bind(this), 400);
 	    }
 	  },
 	  firstMove: function firstMove() {
@@ -21831,14 +21819,28 @@
 	    console.log(arr);
 	    setTimeout(function () {
 	      this.resetBtnColor();
-	    }.bind(this), 500);
+	    }.bind(this), 400);
+	  },
+	  resetFirstMove: function resetFirstMove() {
+	    arr = [0];
+	    humanArr = [0];
+	    correct = 1;
+	    humanClick = 0;
+	    this.firstMove();
 	  },
 	  doSetTimeout: function doSetTimeout(i) {
 	    setTimeout(function () {
 	      this.playSound(arr[i]);
 	    }.bind(this), i * 1000);
 	  },
-	
+	  loopMovesNoAdd: function loopMovesNoAdd() {
+	    correct = 1;
+	    humanClick = 0;
+	    var i = 1;
+	    for (i = 1; i < arr.length; i++) {
+	      this.doSetTimeout(i);
+	    }
+	  },
 	  loopMoves: function loopMoves() {
 	    correct = 1;
 	    humanClick = 0;
@@ -21846,8 +21848,6 @@
 	    for (i = 1; i < arr.length; i++) {
 	      this.doSetTimeout(i);
 	    }
-	    console.log(i);
-	    console.log(arr.length);
 	    if (i === arr.length) {
 	      //add to array of moves
 	      setTimeout(function () {
@@ -21859,12 +21859,17 @@
 	    var arrLength = arr.length;
 	    if (arr[humanClick] === num) {
 	      correct++;
-	    } else if (arr[humanClick] !== num) {
-	      this.playSound(0);
-	    }
-	    console.log('correct is ' + correct);
-	    console.log('arr length is' + arrLength);
-	    if (correct === arrLength) {
+	    } else if (arr[humanClick] !== num && this.state.normal) {
+	      console.log('error');
+	      setTimeout(function () {
+	        this.loopMovesNoAdd();
+	      }.bind(this), 3000);
+	    } else if (arr[humanClick] !== num && this.state.strict) {
+	      console.log('error');
+	      setTimeout(function () {
+	        this.resetFirstMove();
+	      }.bind(this), 3000);
+	    } else if (correct === arrLength) {
 	      console.log('next loop');
 	      this.loopMoves();
 	    }
@@ -21882,12 +21887,11 @@
 	      return;
 	    }
 	    if (id === 'normal') {
-	      this.setState({ normal: true, start: false, play: false });
+	      this.setState({ normal: true, start: false });
 	      this.firstMove();
 	    } else if (id === 'strict') {
-	      this.setState({ strict: true, start: false, play: false });
+	      this.setState({ strict: true, start: false });
 	      this.firstMove();
-	      //run game function using strict flag
 	    }
 	  },
 	  render: function render() {
@@ -21901,7 +21905,6 @@
 	        React.createElement('audio', { ref: 'noiseTwo', src: 'https://s3.amazonaws.com/freecodecamp/simonSound2.mp3', type: 'audio/mp3' }),
 	        React.createElement('audio', { ref: 'noiseThree', src: 'https://s3.amazonaws.com/freecodecamp/simonSound3.mp3', type: 'audio/mp3' }),
 	        React.createElement('audio', { ref: 'noiseFour', src: 'https://s3.amazonaws.com/freecodecamp/simonSound4.mp3', type: 'audio/mp3' }),
-	        React.createElement('audio', { ref: 'error', src: './family-feud.wav', type: 'audio/wav' }),
 	        React.createElement(
 	          'div',
 	          { className: 'game-container' },

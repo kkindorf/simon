@@ -6,7 +6,6 @@ var humanArr= [0];
 var correct = 1;
 var humanClick = 0;
 var initialState = {
-                    play: true,
                     normal: false,
                     restart: false,
                     strict: false,
@@ -22,11 +21,9 @@ var SimonContainer = React.createClass({
     return initialState;
   },
   onStart: function(){
-    //start game
     this.setState({start: true})
   },
   onRestart: function(){
-    //reset state
     this.setState(this.getInitialState());
     arr = [0];
     humanArr=[0];
@@ -52,31 +49,22 @@ var SimonContainer = React.createClass({
       })
   },
   playSound: function(num){
-    if(num === 0 && strict === true){
+      if(num === 0){
         this.refs.error.play();
-        setTimeout(function(){
-          this.restartLoops();
-        }.bind(this), 600);
-      }
-      if(num === 0 && normal){
-        this.refs.error.play();
-        setTimeout(function(){
-          this.loopMoves();
-        }.bind(this), 600);
       }
     if(num === 1){
       this.refs.noiseOne.play();
       this.setState({bgButtonOne: 'bgButton one-active'});
       setTimeout(function(){
         this.resetBtnColor();
-      }.bind(this), 500);
+      }.bind(this), 400);
     }
     else if(num === 2){
       this.refs.noiseTwo.play();
       this.setState({bgButtonTwo: 'bgButton two-active'});
       setTimeout(function(){
         this.resetBtnColor();
-      }.bind(this), 500);
+      }.bind(this), 400);
 
     }
     else if(num === 3){
@@ -84,7 +72,7 @@ var SimonContainer = React.createClass({
       this.setState({bgButtonThree: 'bgButton three-active'});
       setTimeout(function(){
         this.resetBtnColor();
-      }.bind(this), 500);
+      }.bind(this), 400);
 
     }
     else if(num === 4){
@@ -92,7 +80,7 @@ var SimonContainer = React.createClass({
       this.setState({bgButtonFour: 'bgButton four-active'});
       setTimeout(function(){
         this.resetBtnColor();
-      }.bind(this), 500);
+      }.bind(this), 400);
     }
 
   },
@@ -103,15 +91,28 @@ var SimonContainer = React.createClass({
     console.log(arr);
     setTimeout(function(){
       this.resetBtnColor();
-    }.bind(this), 500);
-
+    }.bind(this), 400);
+  },
+  resetFirstMove: function(){
+    arr = [0];
+    humanArr = [0];
+    correct = 1;
+    humanClick = 0;
+    this.firstMove();
   },
    doSetTimeout:function(i) {
       setTimeout(function() {
         this.playSound(arr[i]);
       }.bind(this), i * 1000);
 },
-
+loopMovesNoAdd: function(){
+  correct = 1;
+  humanClick = 0;
+  var i = 1;
+    for (i = 1; i < arr.length; i++){
+      this.doSetTimeout(i);
+    }
+},
   loopMoves: function(){
     correct = 1;
     humanClick = 0;
@@ -119,27 +120,31 @@ var SimonContainer = React.createClass({
       for (i = 1; i < arr.length; i++){
         this.doSetTimeout(i);
       }
-      console.log(i)
-      console.log(arr.length);
       if(i === arr.length){
         //add to array of moves
         setTimeout(function(){
           this.firstMove();
         }.bind(this), i * 1000);
       }
-
   },
   checkChoices: function(humanClick, num){
     var arrLength = arr.length;
     if(arr[humanClick] === num){
       correct++;
     }
-    else if(arr[humanClick] !== num){
-      this.playSound(0);
+    else if(arr[humanClick] !== num && this.state.normal){
+      console.log('error');
+      setTimeout(function(){
+        this.loopMovesNoAdd();
+      }.bind(this), 3000);
     }
-    console.log('correct is '+correct);
-    console.log('arr length is'+arrLength);
-    if(correct === arrLength){
+    else if(arr[humanClick] !== num && this.state.strict){
+      console.log('error');
+      setTimeout(function(){
+        this.resetFirstMove();
+      }.bind(this), 3000);
+    }
+    else if(correct === arrLength){
       console.log('next loop');
        this.loopMoves();
     }
@@ -158,14 +163,12 @@ var SimonContainer = React.createClass({
       return;
     }
     if(id ==='normal'){
-      this.setState({normal: true, start: false, play: false});
+      this.setState({normal: true, start: false});
       this.firstMove();
     }
     else if(id === 'strict'){
-      this.setState({strict: true, start: false, play: false});
+      this.setState({strict: true, start: false});
       this.firstMove();
-      //run game function using strict flag
-
     }
   },
   render: function(){
@@ -176,7 +179,7 @@ var SimonContainer = React.createClass({
               <audio ref="noiseTwo" src="https://s3.amazonaws.com/freecodecamp/simonSound2.mp3" type="audio/mp3"></audio>
               <audio ref="noiseThree" src="https://s3.amazonaws.com/freecodecamp/simonSound3.mp3" type="audio/mp3"></audio>
               <audio ref="noiseFour" src="https://s3.amazonaws.com/freecodecamp/simonSound4.mp3" type="audio/mp3"></audio>
-              <audio ref="error" src='./family-feud.wav' type='audio/wav'></audio>
+
               <div className="game-container">
                 <BgBtnContainer onClick = {this.onBtnType}
                                 bgButtonOne = {this.state.bgButtonOne}
