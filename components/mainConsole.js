@@ -3,12 +3,12 @@ var MainConsole = React.createClass({
   render: function(){
     return(
       <div className='console-container'>
-        <input type='text' id='move-count' value={this.props.numMoves} readOnly/>
+        <h2>Simon</h2>
+        <input ref='input' type='text' id='move-count' className = "input-lg" value={this.props.numMoves} readOnly/>
         <div className="console-buttons">
-          <h2 id="normal" onClick={this.props.onClick}>Normal Mode</h2>
-          <h2 id="restart" onClick={this.props.onRestart}>Restart</h2>
-          <h2 id="strict" onClick={this.props.onClick}>Strict Mode</h2>
-          <h2 id="start" onClick={this.props.onStart}>Start</h2>
+          <div id="strict" onClick={this.props.onClick}></div>
+          <div id="restart" onClick={this.props.onRestart}></div>
+          <div id="start" onClick={this.props.onStart}></div>
         </div>
       </div>
     )
