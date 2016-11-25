@@ -12,11 +12,13 @@ var initialState = {
     normal: true,
     restart: false,
     strict: false,
+    start: true,
     moveCount: step,
     bgButtonOne: 'bgButton one',
     bgButtonTwo: 'bgButton two',
     bgButtonThree: 'bgButton three',
-    bgButtonFour: 'bgButton four'
+    bgButtonFour: 'bgButton four',
+    strictLight: 'strict-off'
 };
 var SimonContainer = React.createClass({
   getInitialState: function() {
@@ -25,7 +27,7 @@ var SimonContainer = React.createClass({
   onStart: function() {
       step = 0;
       this.setState({start: true, moveCount: step});
-      if(this.state.start && !this.state.strict) {
+      if(this.state.start && this.state.strict === false) {
           step = 0;
           this.setState({
               normal: true,
@@ -34,10 +36,19 @@ var SimonContainer = React.createClass({
           });
           this.firstMove();
       }
+      else if(this.state.strict && this.state.start){
+        step = 0;
+        this.setState({
+            strict: true,
+            start: false,
+            moveCount: step
+        });
+        this.firstMove();
+      }
   },
   onRestart: function() {
       if (!noHumanClick) {
-          step = 'Choose Mode';
+          step = 0;
           this.setState(this.getInitialState());
           arr = [0];
           humanArr = [0];
@@ -159,12 +170,11 @@ var SimonContainer = React.createClass({
       } else if (arr[humanClick] !== num && this.state.normal) {
           num = 0;
           this.playSound(num);
-          console.log('error');
           noHumanClick = true;
           setTimeout(function() {
               this.loopMovesNoAdd();
           }.bind(this), 2000);
-      } else if (arr[humanClick] !== num && this.state.strict) {
+      } else if (this.state.strict && arr[humanClick] !== num) {
           num = 0;
           noHumanClick = true;
           this.playSound(num);
@@ -173,7 +183,6 @@ var SimonContainer = React.createClass({
           this.setState({
               moveCount: step
           })
-          console.log('error');
           setTimeout(function() {
               this.resetFirstMove();
           }.bind(this), 2000);
@@ -186,7 +195,7 @@ var SimonContainer = React.createClass({
           } else if (step === 9) {
               pauseTime = 720;
           } else if (step === 13) {
-              pauseTIme = 650;
+              pauseTime = 650;
           } else if (step === 20) {
               step = "WIN";
               arr = [0];
@@ -194,10 +203,11 @@ var SimonContainer = React.createClass({
               correct = 1;
               humanClick = 0;
               noHumanClick = true;
-              this.setState(moveCount: step);
-              this.firstMove();
+              this.setState({moveCount: step});
+              setTimeout(function(){
+                this.onRestart();
+              }.bind(this), 2000);
           }
-          console.log('next loop');
           this.loopMoves();
       }
   },
@@ -213,18 +223,12 @@ var SimonContainer = React.createClass({
   },
   onGameType: function(event) {
       var id = event.target.id;
-      if (!this.state.start) {
-          return;
-      }
-       if (this.state.start && id === 'strict') {
-          step = 0;
+       if (id === 'strict') {
           this.setState({
               strict: true,
               normal: false,
-              start: false,
-              moveCount: step
+              strictLight: 'strict-on'
           });
-          this.firstMove();
       }
   },
   render: function(){
@@ -243,7 +247,8 @@ var SimonContainer = React.createClass({
                                 bgButtonTwo = {this.state.bgButtonTwo}
                                 bgButtonThree = {this.state.bgButtonThree}
                                 bgButtonFour = {this.state.bgButtonFour}/>
-                <MainConsole numMoves = {this.state.moveCount}
+                <MainConsole strictOff = {this.state.strictLight}
+                             numMoves = {this.state.moveCount}
                              onClick = {this.onGameType}
                              onStart = {this.onStart}
                              onRestart = {this.onRestart}/>

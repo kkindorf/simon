@@ -21744,11 +21744,13 @@
 	    normal: true,
 	    restart: false,
 	    strict: false,
+	    start: true,
 	    moveCount: step,
 	    bgButtonOne: 'bgButton one',
 	    bgButtonTwo: 'bgButton two',
 	    bgButtonThree: 'bgButton three',
-	    bgButtonFour: 'bgButton four'
+	    bgButtonFour: 'bgButton four',
+	    strictLight: 'strict-off'
 	};
 	var SimonContainer = React.createClass({
 	    displayName: 'SimonContainer',
@@ -21759,10 +21761,18 @@
 	    onStart: function onStart() {
 	        step = 0;
 	        this.setState({ start: true, moveCount: step });
-	        if (this.state.start && !this.state.strict) {
+	        if (this.state.start && this.state.strict === false) {
 	            step = 0;
 	            this.setState({
 	                normal: true,
+	                start: false,
+	                moveCount: step
+	            });
+	            this.firstMove();
+	        } else if (this.state.strict && this.state.start) {
+	            step = 0;
+	            this.setState({
+	                strict: true,
 	                start: false,
 	                moveCount: step
 	            });
@@ -21771,7 +21781,7 @@
 	    },
 	    onRestart: function onRestart() {
 	        if (!noHumanClick) {
-	            step = 'Choose Mode';
+	            step = 0;
 	            this.setState(this.getInitialState());
 	            arr = [0];
 	            humanArr = [0];
@@ -21891,12 +21901,11 @@
 	        } else if (arr[humanClick] !== num && this.state.normal) {
 	            num = 0;
 	            this.playSound(num);
-	            console.log('error');
 	            noHumanClick = true;
 	            setTimeout(function () {
 	                this.loopMovesNoAdd();
 	            }.bind(this), 2000);
-	        } else if (arr[humanClick] !== num && this.state.strict) {
+	        } else if (this.state.strict && arr[humanClick] !== num) {
 	            num = 0;
 	            noHumanClick = true;
 	            this.playSound(num);
@@ -21905,7 +21914,6 @@
 	            this.setState({
 	                moveCount: step
 	            });
-	            console.log('error');
 	            setTimeout(function () {
 	                this.resetFirstMove();
 	            }.bind(this), 2000);
@@ -21918,7 +21926,7 @@
 	            } else if (step === 9) {
 	                pauseTime = 720;
 	            } else if (step === 13) {
-	                pauseTIme = 650;
+	                pauseTime = 650;
 	            } else if (step === 20) {
 	                step = "WIN";
 	                arr = [0];
@@ -21926,10 +21934,11 @@
 	                correct = 1;
 	                humanClick = 0;
 	                noHumanClick = true;
-	                this.setState(moveCount);
-	                this.firstMove();
+	                this.setState({ moveCount: step });
+	                setTimeout(function () {
+	                    this.onRestart();
+	                }.bind(this), 2000);
 	            }
-	            console.log('next loop');
 	            this.loopMoves();
 	        }
 	    },
@@ -21945,18 +21954,12 @@
 	    },
 	    onGameType: function onGameType(event) {
 	        var id = event.target.id;
-	        if (!this.state.start) {
-	            return;
-	        }
-	        if (this.state.start && id === 'strict') {
-	            step = 0;
+	        if (id === 'strict') {
 	            this.setState({
 	                strict: true,
 	                normal: false,
-	                start: false,
-	                moveCount: step
+	                strictLight: 'strict-on'
 	            });
-	            this.firstMove();
 	        }
 	    },
 	    render: function render() {
@@ -21979,7 +21982,8 @@
 	                        bgButtonTwo: this.state.bgButtonTwo,
 	                        bgButtonThree: this.state.bgButtonThree,
 	                        bgButtonFour: this.state.bgButtonFour }),
-	                    React.createElement(MainConsole, { numMoves: this.state.moveCount,
+	                    React.createElement(MainConsole, { strictOff: this.state.strictLight,
+	                        numMoves: this.state.moveCount,
 	                        onClick: this.onGameType,
 	                        onStart: this.onStart,
 	                        onRestart: this.onRestart })
@@ -22015,8 +22019,13 @@
 	        { className: 'console-buttons' },
 	        React.createElement(
 	          'div',
-	          { id: 'strict', onClick: this.props.onClick },
-	          'Strict'
+	          { className: 'strict-container' },
+	          React.createElement('div', { id: 'strict-light', className: this.props.strictOff }),
+	          React.createElement(
+	            'div',
+	            { id: 'strict', onClick: this.props.onClick },
+	            'Strict'
+	          )
 	        ),
 	        React.createElement(
 	          'div',
