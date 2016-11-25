@@ -22039,7 +22039,7 @@
 	  render: function render() {
 	    return React.createElement(
 	      'div',
-	      { className: 'bgButton-container' },
+	      null,
 	      React.createElement(
 	        'div',
 	        { className: 'firstTwoButtons' },

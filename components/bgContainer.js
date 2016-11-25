@@ -2,7 +2,7 @@ var React = require('react');
 var BgBtnContainer = React.createClass({
   render: function(){
     return (
-      <div className='bgButton-container'>
+      <div>
         <div className="firstTwoButtons">
           <div id='1' className={this.props.bgButtonOne} onClick={this.props.onClick}></div>
           <div id='2' className={this.props.bgButtonTwo} onClick={this.props.onClick}></div>
