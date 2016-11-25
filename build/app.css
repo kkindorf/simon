@@ -11,7 +11,7 @@
 }
 
 .bgButton {
-    border: 15px solid #555;
+    border: 15px solid #2c3138;
     padding: 87px;
     display: inline-block;
     margin: 0 bottom;
@@ -90,50 +90,83 @@
     -moz-border-radius: 50%;
     border-radius: 50%;
     -webkit-border-radius: 50%;
-    background: #555;
+    background: #2c3138;
+    font-weight: bold;
 }
-
+h2{
+  font-size: 2.5em;
+  color: #dee1e5;
+}
 input {
-    width: 60px;
-    background: black;
+    height:38px;
+    width: 55px;
+    background: #2c3138;
     color: white;
+    margin-right: 65px;
+    text-align: center;
 }
 
 #strict {
-    margin: auto;
     background: green;
-    width: 10px;
-    padding: 8px;
+    padding: 4px;
+    position: absolute;
+    top: 77px;
+    right: 37px;
+    color: #dee1e5;
 }
 
 #restart, #start {
     display: inline-block;
     background: red;
-    width: 10px;
-    padding: 8px;
+    padding: 4px;
+    margin-top:16px;
+    color: #dee1e5;
+
+}
+#restart, #start, #strict, input{
+  border-radius: 111px 111px 111px 111px;
+-moz-border-radius: 111px 111px 111px 111px;
+-webkit-border-radius: 111px 111px 111px 111px;
 }
 
 #restart {
     margin-right: 30px;
 }
 @media (max-width: 500px) {
+  h2{
+    font-size: 2em;
+  }
+  input{
+    height:30px;
+    width: 45px;
+  }
   .bgButton{
     padding: 80px;
-    border: 10px solid #555;
+    border: 10px solid #2c3138;
   }
   .console-container{
     width: 170px;
     height: 170px;
   }
-
+  #strict{
+    top: 63px;
+    right: 25px;
+  }
+  #restart {
+      margin-right: 21px;
+  }
 }
 @media (max-width: 320px) {
   .bgButton{
     padding: 70px;
-    border: 10px solid #555;
+    border: 10px solid #2c3138;
   }
   .console-container{
     width: 160px;
     height: 160px;
+  }
+  #strict{
+    top: 64px;
+    right: 23px;
   }
 }

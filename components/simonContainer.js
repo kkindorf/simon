@@ -23,11 +23,17 @@ var SimonContainer = React.createClass({
           return initialState;
   },
   onStart: function() {
-      step = 'Choose Mode';
-      this.setState({
-          start: true,
-          moveCount: step
-      });
+      step = 0;
+      this.setState({start: true, moveCount: step});
+      if(this.state.start && !this.state.strict) {
+          step = 0;
+          this.setState({
+              normal: true,
+              start: false,
+              moveCount: step
+          });
+          this.firstMove();
+      }
   },
   onRestart: function() {
       if (!noHumanClick) {
@@ -63,6 +69,7 @@ var SimonContainer = React.createClass({
   playSound: function(num) {
       if (num === 0) {
           this.refs.error.play();
+          return;
       }
       if (num === 1) {
           this.refs.noiseOne.play();
@@ -74,27 +81,21 @@ var SimonContainer = React.createClass({
           }.bind(this), 450);
       } else if (num === 2) {
           this.refs.noiseTwo.play();
-          this.setState({
-              bgButtonTwo: 'bgButton two-active'
-          });
+          this.setState({bgButtonTwo: 'bgButton two-active'});
           setTimeout(function() {
               this.resetBtnColor();
           }.bind(this), 450);
 
       } else if (num === 3) {
           this.refs.noiseThree.play();
-          this.setState({
-              bgButtonThree: 'bgButton three-active'
-          });
+          this.setState({bgButtonThree: 'bgButton three-active'});
           setTimeout(function() {
               this.resetBtnColor();
           }.bind(this), 450);
 
       } else if (num === 4) {
           this.refs.noiseFour.play();
-          this.setState({
-              bgButtonFour: 'bgButton four-active'
-          });
+          this.setState({bgButtonFour: 'bgButton four-active'});
           setTimeout(function() {
               this.resetBtnColor();
           }.bind(this), 450);
@@ -156,13 +157,17 @@ var SimonContainer = React.createClass({
       if (arr[humanClick] === num) {
           correct++;
       } else if (arr[humanClick] !== num && this.state.normal) {
+          num = 0;
+          this.playSound(num);
           console.log('error');
           noHumanClick = true;
           setTimeout(function() {
               this.loopMovesNoAdd();
           }.bind(this), 2000);
       } else if (arr[humanClick] !== num && this.state.strict) {
+          num = 0;
           noHumanClick = true;
+          this.playSound(num);
           step = 0;
           pauseTime = 900;
           this.setState({
@@ -175,17 +180,15 @@ var SimonContainer = React.createClass({
       }
       if (correct === arrLength) {
           step++;
-          this.setState({
-              moveCount: step
-          });
+          this.setState({moveCount: step});
           if (step === 5) {
               pauseTime = 800;
           } else if (step === 9) {
-              pauseTime = 670;
+              pauseTime = 720;
           } else if (step === 13) {
-              pauseTIme = 550;
+              pauseTIme = 650;
           } else if (step === 20) {
-              step = "WINNER";
+              step = "WIN";
               arr = [0];
               humanArr = [0];
               correct = 1;
@@ -213,19 +216,11 @@ var SimonContainer = React.createClass({
       if (!this.state.start) {
           return;
       }
-       if (id === 'strict') {
+       if (this.state.start && id === 'strict') {
           step = 0;
           this.setState({
               strict: true,
               normal: false,
-              start: false,
-              moveCount: step
-          });
-          this.firstMove();
-      } else {
-          step = 0;
-          this.setState({
-              normal: true,
               start: false,
               moveCount: step
           });
@@ -236,6 +231,7 @@ var SimonContainer = React.createClass({
     return (
       <div className="container-fluid">
         <div className="row">
+              <audio ref="error" src="./error.wav" type="audio/wav"></audio>
               <audio ref="noiseOne" src="https://s3.amazonaws.com/freecodecamp/simonSound1.mp3" type="audio/mp3"></audio>
               <audio ref="noiseTwo" src="https://s3.amazonaws.com/freecodecamp/simonSound2.mp3" type="audio/mp3"></audio>
               <audio ref="noiseThree" src="https://s3.amazonaws.com/freecodecamp/simonSound3.mp3" type="audio/mp3"></audio>
