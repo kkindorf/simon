@@ -11,8 +11,8 @@
 }
 
 .bgButton {
-    border: 20px solid black;
-    padding: 83px;
+    border: 15px solid #555;
+    padding: 87px;
     display: inline-block;
     margin: 0 bottom;
 }
@@ -80,7 +80,6 @@
 .console-container {
     margin: auto;
     width: 200px;
-    border: 1px solid black;
     z-index: 3;
     top: 0;
     right: 0;
@@ -116,4 +115,25 @@ input {
 
 #restart {
     margin-right: 30px;
+}
+@media (max-width: 500px) {
+  .bgButton{
+    padding: 80px;
+    border: 10px solid #555;
+  }
+  .console-container{
+    width: 170px;
+    height: 170px;
+  }
+
+}
+@media (max-width: 320px) {
+  .bgButton{
+    padding: 70px;
+    border: 10px solid #555;
+  }
+  .console-container{
+    width: 160px;
+    height: 160px;
+  }
 }
