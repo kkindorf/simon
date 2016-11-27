@@ -196,7 +196,7 @@ var SimonContainer = React.createClass({
               pauseTime = 720;
           } else if (step === 13) {
               pauseTime = 650;
-          } else if (step === 20) {
+          } else if (step === 21) {
               step = "WIN";
               arr = [0];
               humanArr = [0];
