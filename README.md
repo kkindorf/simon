@@ -1,6 +1,8 @@
 # simon
 My version of Simon built when I was first learning React
 
+![Simon App](simon.png)
+
 This is one of FreeCodeCamp's front end development certificate projects. I was learning React when I started working on this so there are quite
 a few things I would eventually like to update but I haven't had the time to work on them.
 
